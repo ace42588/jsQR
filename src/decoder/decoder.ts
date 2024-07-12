@@ -4,6 +4,17 @@ import { decode as decodeData, DecodedQR } from "./decodeData";
 import { decode as rsDecode } from "./reedsolomon";
 import { Version, VERSIONS } from "./version";
 
+/*
+export interface FullDecodedQR extends DecodedQR {
+  formatInfo: {
+	  errorCorrectionLevel: number,
+	  dataMask: number,
+  },
+  codewords: number[],
+  dataBlocks:
+}
+*/
+
 // tslint:disable:no-bitwise
 function numBitsDiffering(x: number, y: number) {
   let z = x ^ y;
@@ -71,7 +82,7 @@ interface FormatInformation {
   dataMask: number;
 }
 
-function buildFunctionPatternMask(version: Version): BitMatrix {
+export function buildFunctionPatternMask(version: Version): BitMatrix {
   const dimension = 17 + 4 * version.versionNumber;
   const matrix = BitMatrix.createEmpty(dimension, dimension);
 
@@ -99,7 +110,7 @@ function buildFunctionPatternMask(version: Version): BitMatrix {
   return matrix;
 }
 
-function readCodewords(matrix: BitMatrix, version: Version, formatInfo: FormatInformation) {
+export function readCodewords(matrix: BitMatrix, version: Version, formatInfo: FormatInformation) {
   const dataMask = DATA_MASKS[formatInfo.dataMask];
   const dimension = matrix.height;
 
@@ -139,7 +150,7 @@ function readCodewords(matrix: BitMatrix, version: Version, formatInfo: FormatIn
   return codewords;
 }
 
-function readVersion(matrix: BitMatrix): Version {
+export function readVersion(matrix: BitMatrix): Version {
   const dimension = matrix.height;
 
   const provisionalVersion = Math.floor((dimension - 17) / 4);
@@ -187,7 +198,7 @@ function readVersion(matrix: BitMatrix): Version {
   }
 }
 
-function readFormatInformation(matrix: BitMatrix) {
+export function readFormatInformation(matrix: BitMatrix) {
   let topLeftFormatInfoBits = 0;
   for (let x = 0; x <= 8; x++) {
     if (x !== 6) { // Skip timing pattern bit
@@ -235,7 +246,7 @@ function readFormatInformation(matrix: BitMatrix) {
   return null;
 }
 
-function getDataBlocks(codewords: number[], version: Version, ecLevel: number) {
+export function getDataBlocks(codewords: number[], version: Version, ecLevel: number) {
   const ecInfo = version.errorCorrectionLevels[ecLevel];
   const dataBlocks: Array<{
     numDataCodewords: number;
@@ -285,7 +296,7 @@ function getDataBlocks(codewords: number[], version: Version, ecLevel: number) {
   return dataBlocks;
 }
 
-function decodeMatrix(matrix: BitMatrix) {
+export function decodeMatrix(matrix: BitMatrix) {
   const version = readVersion(matrix);
   if (!version) {
     return null;
@@ -318,13 +329,14 @@ function decodeMatrix(matrix: BitMatrix) {
   }
 
   try {
-    return decodeData(resultBytes, version.versionNumber);
+    const data = decodeData(resultBytes, version.versionNumber);
+	return { ...data, formatInfo, codewords, dataBlocks };
   } catch {
     return null;
   }
 }
 
-export function decode(matrix: BitMatrix): DecodedQR {
+export function decode(matrix: BitMatrix) {
   if (matrix == null) {
     return null;
   }
