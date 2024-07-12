@@ -73,6 +73,9 @@ function scanReturnAll(matrix: BitMatrix) {
         data: decoded.text,
         chunks: decoded.chunks,
         version: decoded.version,
+		formatInfo: decoded.formatInfo, 
+		codewords: decoded.codewords, 
+		dataBlocks: decoded.dataBlocks,
         location: {
           topRightCorner: extracted.mappingFunction(location.dimension, 0),
           topLeftCorner: extracted.mappingFunction(0, 0),
@@ -84,9 +87,6 @@ function scanReturnAll(matrix: BitMatrix) {
           bottomLeftFinderPattern: location.bottomLeft,
 
           bottomRightAlignmentPattern: location.alignmentPattern,
-		  formatInfo: decoded.formatInfo, 
-		  codewords: decoded.codewords, 
-		  dataBlocks: decoded.dataBlocks,
         },
       };
     }

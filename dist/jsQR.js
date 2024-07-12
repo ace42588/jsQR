@@ -373,6 +373,9 @@ function scanReturnAll(matrix) {
                 data: decoded.text,
                 chunks: decoded.chunks,
                 version: decoded.version,
+                formatInfo: decoded.formatInfo,
+                codewords: decoded.codewords,
+                dataBlocks: decoded.dataBlocks,
                 location: {
                     topRightCorner: extracted.mappingFunction(location_2.dimension, 0),
                     topLeftCorner: extracted.mappingFunction(0, 0),
@@ -382,9 +385,6 @@ function scanReturnAll(matrix) {
                     topLeftFinderPattern: location_2.topLeft,
                     bottomLeftFinderPattern: location_2.bottomLeft,
                     bottomRightAlignmentPattern: location_2.alignmentPattern,
-                    formatInfo: decoded.formatInfo,
-                    codewords: decoded.codewords,
-                    dataBlocks: decoded.dataBlocks,
                 },
             };
         }
