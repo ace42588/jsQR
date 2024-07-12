@@ -358,6 +358,36 @@ function scan(matrix) {
     }
     return null;
 }
+function scanReturnAll(matrix) {
+    var locations = locator_1.locate(matrix);
+    if (!locations) {
+        return null;
+    }
+    for (var _i = 0, locations_2 = locations; _i < locations_2.length; _i++) {
+        var location_2 = locations_2[_i];
+        var extracted = extractor_1.extract(matrix, location_2);
+        var decoded = decoder_1.decode(extracted.matrix);
+        if (decoded) {
+            return {
+                binaryData: decoded.bytes,
+                data: decoded.text,
+                chunks: decoded.chunks,
+                version: decoded.version,
+                location: {
+                    topRightCorner: extracted.mappingFunction(location_2.dimension, 0),
+                    topLeftCorner: extracted.mappingFunction(0, 0),
+                    bottomRightCorner: extracted.mappingFunction(location_2.dimension, location_2.dimension),
+                    bottomLeftCorner: extracted.mappingFunction(0, location_2.dimension),
+                    topRightFinderPattern: location_2.topRight,
+                    topLeftFinderPattern: location_2.topLeft,
+                    bottomLeftFinderPattern: location_2.bottomLeft,
+                    bottomRightAlignmentPattern: location_2.alignmentPattern,
+                },
+            };
+        }
+    }
+    return null;
+}
 var defaultOptions = {
     inversionAttempts: "attemptBoth",
 };
@@ -370,9 +400,9 @@ function jsQR(data, width, height, providedOptions) {
     var shouldInvert = options.inversionAttempts === "attemptBoth" || options.inversionAttempts === "invertFirst";
     var tryInvertedFirst = options.inversionAttempts === "onlyInvert" || options.inversionAttempts === "invertFirst";
     var _a = binarizer_1.binarize(data, width, height, shouldInvert), binarized = _a.binarized, inverted = _a.inverted;
-    var result = scan(tryInvertedFirst ? inverted : binarized);
+    var result = scanReturnAll(tryInvertedFirst ? inverted : binarized);
     if (!result && (options.inversionAttempts === "attemptBoth" || options.inversionAttempts === "invertFirst")) {
-        result = scan(tryInvertedFirst ? binarized : inverted);
+        result = scanReturnAll(tryInvertedFirst ? binarized : inverted);
     }
     return result;
 }
@@ -506,11 +536,29 @@ exports.binarize = binarize;
 
 "use strict";
 
+var __assign = (this && this.__assign) || Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+            t[p] = s[p];
+    }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var BitMatrix_1 = __webpack_require__(0);
 var decodeData_1 = __webpack_require__(6);
 var reedsolomon_1 = __webpack_require__(9);
 var version_1 = __webpack_require__(10);
+/*
+export interface FullDecodedQR extends DecodedQR {
+  formatInfo: {
+      errorCorrectionLevel: number,
+      dataMask: number,
+  },
+  codewords: number[],
+  dataBlocks:
+}
+*/
 // tslint:disable:no-bitwise
 function numBitsDiffering(x, y) {
     var z = x ^ y;
@@ -593,6 +641,7 @@ function buildFunctionPatternMask(version) {
     }
     return matrix;
 }
+exports.buildFunctionPatternMask = buildFunctionPatternMask;
 function readCodewords(matrix, version, formatInfo) {
     var dataMask = DATA_MASKS[formatInfo.dataMask];
     var dimension = matrix.height;
@@ -629,6 +678,7 @@ function readCodewords(matrix, version, formatInfo) {
     }
     return codewords;
 }
+exports.readCodewords = readCodewords;
 function readVersion(matrix) {
     var dimension = matrix.height;
     var provisionalVersion = Math.floor((dimension - 17) / 4);
@@ -671,6 +721,7 @@ function readVersion(matrix) {
         return bestVersion;
     }
 }
+exports.readVersion = readVersion;
 function readFormatInformation(matrix) {
     var topLeftFormatInfoBits = 0;
     for (var x = 0; x <= 8; x++) {
@@ -717,6 +768,7 @@ function readFormatInformation(matrix) {
     }
     return null;
 }
+exports.readFormatInformation = readFormatInformation;
 function getDataBlocks(codewords, version, ecLevel) {
     var ecInfo = version.errorCorrectionLevels[ecLevel];
     var dataBlocks = [];
@@ -759,6 +811,7 @@ function getDataBlocks(codewords, version, ecLevel) {
     }
     return dataBlocks;
 }
+exports.getDataBlocks = getDataBlocks;
 function decodeMatrix(matrix) {
     var version = readVersion(matrix);
     if (!version) {
@@ -788,12 +841,14 @@ function decodeMatrix(matrix) {
         }
     }
     try {
-        return decodeData_1.decode(resultBytes, version.versionNumber);
+        var data = decodeData_1.decode(resultBytes, version.versionNumber);
+        return __assign({}, data, { formatInfo: formatInfo, codewords: codewords, dataBlocks: dataBlocks });
     }
     catch (_a) {
         return null;
     }
 }
+exports.decodeMatrix = decodeMatrix;
 function decode(matrix) {
     if (matrix == null) {
         return null;
@@ -842,10 +897,10 @@ var ModeByte;
     ModeByte[ModeByte["Byte"] = 4] = "Byte";
     ModeByte[ModeByte["Kanji"] = 8] = "Kanji";
     ModeByte[ModeByte["ECI"] = 7] = "ECI";
-    // StructuredAppend = 0x3,
-    // FNC1FirstPosition = 0x5,
-    // FNC1SecondPosition = 0x9,
-})(ModeByte || (ModeByte = {}));
+    ModeByte[ModeByte["StructuredAppend"] = 3] = "StructuredAppend";
+    ModeByte[ModeByte["FNC1FirstPosition"] = 5] = "FNC1FirstPosition";
+    ModeByte[ModeByte["FNC1SecondPosition"] = 9] = "FNC1SecondPosition";
+})(ModeByte = exports.ModeByte || (exports.ModeByte = {}));
 function decodeNumeric(stream, size) {
     var bytes = [];
     var text = "";

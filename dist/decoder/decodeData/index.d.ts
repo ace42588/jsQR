@@ -24,4 +24,15 @@ export declare enum Mode {
     Kanji = "kanji",
     ECI = "eci"
 }
+export declare enum ModeByte {
+    Terminator = 0,
+    Numeric = 1,
+    Alphanumeric = 2,
+    Byte = 4,
+    Kanji = 8,
+    ECI = 7,
+    StructuredAppend = 3,
+    FNC1FirstPosition = 5,
+    FNC1SecondPosition = 9
+}
 export declare function decode(data: Uint8ClampedArray, version: number): DecodedQR;
