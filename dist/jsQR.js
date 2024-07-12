@@ -382,6 +382,9 @@ function scanReturnAll(matrix) {
                     topLeftFinderPattern: location_2.topLeft,
                     bottomLeftFinderPattern: location_2.bottomLeft,
                     bottomRightAlignmentPattern: location_2.alignmentPattern,
+                    formatInfo: decoded.formatInfo,
+                    codewords: decoded.codewords,
+                    dataBlocks: decoded.dataBlocks,
                 },
             };
         }

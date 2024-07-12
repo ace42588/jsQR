@@ -84,6 +84,9 @@ function scanReturnAll(matrix: BitMatrix) {
           bottomLeftFinderPattern: location.bottomLeft,
 
           bottomRightAlignmentPattern: location.alignmentPattern,
+		  formatInfo: decoded.formatInfo, 
+		  codewords: decoded.codewords, 
+		  dataBlocks: decoded.dataBlocks,
         },
       };
     }
