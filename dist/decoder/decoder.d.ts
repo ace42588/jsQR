@@ -25,6 +25,7 @@ export declare function decodeMatrix(matrix: BitMatrix): {
         numDataCodewords: number;
         codewords: number[];
     }[];
+    resultBytes: Uint8ClampedArray;
     text: string;
     bytes: number[];
     chunks: (import("../../../../../../Users/Trace/superfluid_sim/jsQR/src/decoder/decodeData").Chunk | import("../../../../../../Users/Trace/superfluid_sim/jsQR/src/decoder/decodeData").ByteChunk | import("../../../../../../Users/Trace/superfluid_sim/jsQR/src/decoder/decodeData").ECIChunk)[];
@@ -40,6 +41,7 @@ export declare function decode(matrix: BitMatrix): {
         numDataCodewords: number;
         codewords: number[];
     }[];
+    resultBytes: Uint8ClampedArray;
     text: string;
     bytes: number[];
     chunks: (import("../../../../../../Users/Trace/superfluid_sim/jsQR/src/decoder/decodeData").Chunk | import("../../../../../../Users/Trace/superfluid_sim/jsQR/src/decoder/decodeData").ByteChunk | import("../../../../../../Users/Trace/superfluid_sim/jsQR/src/decoder/decodeData").ECIChunk)[];

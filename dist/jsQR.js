@@ -552,16 +552,6 @@ var BitMatrix_1 = __webpack_require__(0);
 var decodeData_1 = __webpack_require__(6);
 var reedsolomon_1 = __webpack_require__(9);
 var version_1 = __webpack_require__(10);
-/*
-export interface FullDecodedQR extends DecodedQR {
-  formatInfo: {
-      errorCorrectionLevel: number,
-      dataMask: number,
-  },
-  codewords: number[],
-  dataBlocks:
-}
-*/
 // tslint:disable:no-bitwise
 function numBitsDiffering(x, y) {
     var z = x ^ y;
@@ -845,7 +835,7 @@ function decodeMatrix(matrix) {
     }
     try {
         var data = decodeData_1.decode(resultBytes, version.versionNumber);
-        return __assign({}, data, { formatInfo: formatInfo, codewords: codewords, dataBlocks: dataBlocks });
+        return __assign({}, data, { formatInfo: formatInfo, codewords: codewords, dataBlocks: dataBlocks, resultBytes: resultBytes });
     }
     catch (_a) {
         return null;

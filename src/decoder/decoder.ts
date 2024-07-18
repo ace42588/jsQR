@@ -4,17 +4,6 @@ import { decode as decodeData, DecodedQR } from "./decodeData";
 import { decode as rsDecode } from "./reedsolomon";
 import { Version, VERSIONS } from "./version";
 
-/*
-export interface FullDecodedQR extends DecodedQR {
-  formatInfo: {
-	  errorCorrectionLevel: number,
-	  dataMask: number,
-  },
-  codewords: number[],
-  dataBlocks:
-}
-*/
-
 // tslint:disable:no-bitwise
 function numBitsDiffering(x: number, y: number) {
   let z = x ^ y;
@@ -330,7 +319,7 @@ export function decodeMatrix(matrix: BitMatrix) {
 
   try {
     const data = decodeData(resultBytes, version.versionNumber);
-	return { ...data, formatInfo, codewords, dataBlocks };
+	return { ...data, formatInfo, codewords, dataBlocks, resultBytes };
   } catch {
     return null;
   }
