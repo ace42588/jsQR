@@ -376,6 +376,7 @@ function scanReturnAll(matrix) {
                 formatInfo: decoded.formatInfo,
                 codewords: decoded.codewords,
                 dataBlocks: decoded.dataBlocks,
+                correctedBytes: decoded.resultBytes,
                 location: {
                     topRightCorner: extracted.mappingFunction(location_2.dimension, 0),
                     topLeftCorner: extracted.mappingFunction(0, 0),

@@ -76,6 +76,7 @@ function scanReturnAll(matrix: BitMatrix) {
 		formatInfo: decoded.formatInfo, 
 		codewords: decoded.codewords, 
 		dataBlocks: decoded.dataBlocks,
+		correctedBytes: decoded.resultBytes,
         location: {
           topRightCorner: extracted.mappingFunction(location.dimension, 0),
           topLeftCorner: extracted.mappingFunction(0, 0),
